@@ -21,6 +21,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+// to handle CORS ERROR
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+  next();
+});
+
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 
@@ -29,7 +37,6 @@ app.use("/users", usersRouter);
 //   next(createError(404));
 // });
 app.use(errorController.get404);
-
 
 // error handler
 app.use(function (err, req, res, next) {
