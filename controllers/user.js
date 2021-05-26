@@ -7,16 +7,16 @@
 //   secretAccessKey: process.env.S3_SECRET
 // });
 
-const NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1");
-const { IamAuthenticator } = require("ibm-watson/auth");
+// const NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1");
+// const { IamAuthenticator } = require("ibm-watson/auth");
 
-const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
-  version: "2020-08-01",
-  authenticator: new IamAuthenticator({
-    apikey: process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY,
-  }),
-  serviceUrl: process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL,
-});
+// const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
+//   version: "2020-08-01",
+//   authenticator: new IamAuthenticator({
+//     apikey: process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY,
+//   }),
+//   serviceUrl: process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL,
+// });
 
 // const analyzeParams = {
 //   html: "<html><head><title>Fruits</title></head><body><h1>Apples and Oranges</h1><p>I love apples! I don't like oranges.</p></body></html>",
@@ -36,7 +36,6 @@ const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
 //     console.log("error:", err);
 //   });
 
-
 exports.getUser = (req, res, next) => {
   res.status(200).json({ message: "user" });
 };
@@ -50,22 +49,32 @@ exports.getPosts = (req, res, next) => {
 };
 
 exports.createPost = (req, res, next) => {
+  const NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1");
+  const { IamAuthenticator } = require("ibm-watson/auth");
+
+  const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
+    version: "2020-08-01",
+    authenticator: new IamAuthenticator({
+      apikey: process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY,
+    }),
+    serviceUrl: process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL,
+  });
+  
   const title = req.body.title;
   const content = req.body.content;
   const toAnalyze = req.body.toAnalyze;
 
   naturalLanguageUnderstanding
-  .analyze(toAnalyze)
-  .then((analysisResults) => {
-    res.status(201).json({
-
-      result:JSON.stringify(analysisResults, null, 2)
+    .analyze(toAnalyze)
+    .then((analysisResults) => {
+      res.status(201).json({
+        result: JSON.stringify(analysisResults, null, 2),
+      });
+      // console.log(JSON.stringify(analysisResults, null, 2));
     })
-    // console.log(JSON.stringify(analysisResults, null, 2));
-  })
-  .catch((err) => {
-    console.log("error:", err);
-  });
+    .catch((err) => {
+      console.log("error:", err);
+    });
 
   // Create post in db
   // res.status(201).json({
