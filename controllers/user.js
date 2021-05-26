@@ -48,33 +48,38 @@ exports.getPosts = (req, res, next) => {
   });
 };
 
-exports.createPost = (req, res, next) => {
+exports.createPost = async (req, res, next) => {
   const NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1");
   const { IamAuthenticator } = require("ibm-watson/auth");
 
-  const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
-    version: "2020-08-01",
-    authenticator: new IamAuthenticator({
-      apikey: process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY,
-    }),
-    serviceUrl: process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL,
-  });
-  
-  const title = req.body.title;
-  const content = req.body.content;
+  const naturalLanguageUnderstanding = await new NaturalLanguageUnderstandingV1(
+    {
+      version: "2020-08-01",
+      authenticator: new IamAuthenticator({
+        apikey: process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY,
+      }),
+      serviceUrl: process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL,
+    }
+  );
+
+  // const title = req.body.title;
+  // const content = req.body.content;
   const toAnalyze = req.body.toAnalyze;
 
-  naturalLanguageUnderstanding
-    .analyze(toAnalyze)
-    .then((analysisResults) => {
-      res.status(201).json({
-        result: JSON.stringify(analysisResults, null, 2),
-      });
-      // console.log(JSON.stringify(analysisResults, null, 2));
-    })
-    .catch((err) => {
-      console.log("error:", err);
+  try {
+    const analysisResults = await naturalLanguageUnderstanding.analyze(
+      toAnalyze
+    );
+    res.status(201).json({
+      result: JSON.stringify(analysisResults, null, 2),
     });
+  } catch (error) {
+    console.log("error:", error);
+  }
+  // console.log(JSON.stringify(analysisResults, null, 2));
+  // })
+  // catch((err) => {
+  // });
 
   // Create post in db
   // res.status(201).json({
