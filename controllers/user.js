@@ -64,8 +64,15 @@ exports.createPost = async (req, res, next) => {
 
   // const title = req.body.title;
   // const content = req.body.content;
-  const toAnalyze = req.body.toAnalyze;
-
+  // const toAnalyze = req.body.toAnalyze;
+  const toAnalyze = {
+    html: "<html><head><title>Fruits</title></head><body><h1>Apples and Oranges</h1><p>I love apples! I don't like oranges.</p></body></html>",
+    features: {
+      emotion: {
+        targets: ["apples", "oranges"],
+      },
+    },
+  };
   try {
     const analysisResults = await naturalLanguageUnderstanding.analyze(
       toAnalyze
