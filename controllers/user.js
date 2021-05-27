@@ -68,9 +68,9 @@ exports.createPost = async (req, res, next) => {
       await new NaturalLanguageUnderstandingV1({
         version: "2020-08-01",
         authenticator: new IamAuthenticator({
-          apikey: ''+apikey+'',
+          apikey: apikey,
         }),
-        serviceUrl: ''+url+'',
+        serviceUrl: url,
       });
 
     // const title = req.body.title;
