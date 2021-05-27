@@ -60,17 +60,14 @@ exports.createPost = async (req, res, next) => {
     const NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1");
     const { IamAuthenticator } = require("ibm-watson/auth");
 
-    const apikey = process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY;
-    const url = process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL;
-    console.log(apikey);
-    console.log(url);
     const naturalLanguageUnderstanding =
       await new NaturalLanguageUnderstandingV1({
         version: "2020-08-01",
         authenticator: new IamAuthenticator({
-          apikey: apikey,
+          apikey: "zh2ta0pUk00isPtZl4tuv3rHU2JRDyhA2-IZl68P6VxH",
         }),
-        serviceUrl: url,
+        serviceUrl:
+          "https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/a5181c10-50ed-4788-8797-ef900d41c5ea",
       });
 
     // const title = req.body.title;
