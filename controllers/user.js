@@ -44,7 +44,7 @@ exports.getOcean = (req, res, next) => {
 };
 exports.getPosts = (req, res, next) => {
   res.status(200).json({
-    posts: [{ title: "First Post", content: "This is the first post!" }],
+    posts: [{ title: "First Post", content: "This is the first post!",apikey:process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY,serviceUrl:process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL }],
   });
 };
 
