@@ -44,36 +44,42 @@ exports.getOcean = (req, res, next) => {
 };
 exports.getPosts = (req, res, next) => {
   res.status(200).json({
-    posts: [{ title: "First Post", content: "This is the first post!",apikey:process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY,serviceUrl:process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL }],
+    posts: [
+      {
+        title: "First Post",
+        content: "This is the first post!",
+        apikey: process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY,
+        serviceUrl: process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL,
+      },
+    ],
   });
 };
 
 exports.createPost = async (req, res, next) => {
-  const NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1");
-  const { IamAuthenticator } = require("ibm-watson/auth");
-
-  const naturalLanguageUnderstanding = await new NaturalLanguageUnderstandingV1(
-    {
-      version: "2020-08-01",
-      authenticator: new IamAuthenticator({
-        apikey: process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY,
-      }),
-      serviceUrl: process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL,
-    }
-  );
-
-  // const title = req.body.title;
-  // const content = req.body.content;
-  // const toAnalyze = req.body.toAnalyze;
-  const toAnalyze = {
-    html: "<html><head><title>Fruits</title></head><body><h1>Apples and Oranges</h1><p>I love apples! I don't like oranges.</p></body></html>",
-    features: {
-      emotion: {
-        targets: ["apples", "oranges"],
-      },
-    },
-  };
   try {
+    const NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1");
+    const { IamAuthenticator } = require("ibm-watson/auth");
+
+    const naturalLanguageUnderstanding =
+      await new NaturalLanguageUnderstandingV1({
+        version: "2020-08-01",
+        authenticator: new IamAuthenticator({
+          apikey: process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY,
+        }),
+        serviceUrl: process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL,
+      });
+
+    // const title = req.body.title;
+    // const content = req.body.content;
+    // const toAnalyze = req.body.toAnalyze;
+    const toAnalyze = {
+      html: "<html><head><title>Fruits</title></head><body><h1>Apples and Oranges</h1><p>I love apples! I don't like oranges.</p></body></html>",
+      features: {
+        emotion: {
+          targets: ["apples", "oranges"],
+        },
+      },
+    };
     const analysisResults = await naturalLanguageUnderstanding.analyze(
       toAnalyze
     );
