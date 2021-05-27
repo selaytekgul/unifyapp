@@ -62,13 +62,15 @@ exports.createPost = async (req, res, next) => {
 
     const apikey = process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY;
     const url = process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL;
+    console.log(apikey);
+    console.log(url);
     const naturalLanguageUnderstanding =
       await new NaturalLanguageUnderstandingV1({
         version: "2020-08-01",
         authenticator: new IamAuthenticator({
-          apikey: String(apikey),
+          apikey: ''+apikey+'',
         }),
-        serviceUrl: String(url),
+        serviceUrl: ''+url+'',
       });
 
     // const title = req.body.title;
