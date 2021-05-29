@@ -70,39 +70,38 @@ exports.createPost = async (req, res, next) => {
           "https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/a5181c10-50ed-4788-8797-ef900d41c5ea",
       });
 
-    // const title = req.body.title;
-    // const content = req.body.content;
-    // const toAnalyze = req.body.toAnalyze;
-    const toAnalyze = {
-      html: "<html><head><title>Fruits</title></head><body><h1>Apples and Oranges</h1><p>I love apples! I don't like oranges.</p></body></html>",
-      features: {
-        emotion: {
-          targets: ["apples", "oranges"],
-        },
-      },
-    };
+    const toAnalyze = req.body.toAnalyze;
     const analysisResults = await naturalLanguageUnderstanding.analyze(
       toAnalyze
     );
-    res.status(201).json({
-      result: JSON.stringify(analysisResults, null, 2),
-    });
+
+    categories = [];
+    if (analysisResults["status"] == 200) {
+      for (const key in analysisResults["result"]) {
+        for (
+          let index = 0;
+          index < analysisResults["result"][key].length;
+          index++
+        ) {
+          const element = analysisResults["result"][key][index];
+
+          if (element["label"] != null) {
+            var category = element["label"].substr(1).split("/");
+            for (let j = 0; j < category.length; j++) {
+              categories.push(category[j]);
+            }
+          }
+        }
+      }
+
+      let categoriesUnique = categories.filter(
+        (value, index, categories) => categories.indexOf(value) === index
+      );
+      res.status(201).json({
+        result: JSON.stringify(categoriesUnique),
+      });
+    }
   } catch (error) {
     console.log("error:", error);
   }
-  // console.log(JSON.stringify(analysisResults, null, 2));
-  // })
-  // catch((err) => {
-  // });
-
-  // Create post in db
-  // res.status(201).json({
-  //   message: "Post created successfully!",
-  //   post: {
-  //     id: new Date().toISOString(),
-  //     title: title,
-  //     content: content,
-  //     toAnalyze: toAnalyze,
-  //   },
-  // });
 };
