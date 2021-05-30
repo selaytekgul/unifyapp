@@ -1,41 +1,3 @@
-// In Node.js, use process.env to access environment variables:
-
-// const aws = require('aws-sdk');
-
-// let s3 = new aws.S3({
-//   accessKeyId: process.env.S3_KEY,
-//   secretAccessKey: process.env.S3_SECRET
-// });
-
-// const NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1");
-// const { IamAuthenticator } = require("ibm-watson/auth");
-
-// const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
-//   version: "2020-08-01",
-//   authenticator: new IamAuthenticator({
-//     apikey: process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY,
-//   }),
-//   serviceUrl: process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL,
-// });
-
-// const analyzeParams = {
-//   html: "<html><head><title>Fruits</title></head><body><h1>Apples and Oranges</h1><p>I love apples! I don't like oranges.</p></body></html>",
-//   features: {
-//     emotion: {
-//       targets: ["apples", "oranges"],
-//     },
-//   },
-// };
-
-// naturalLanguageUnderstanding
-//   .analyze(analyzeParams)
-//   .then((analysisResults) => {
-//     console.log(JSON.stringify(analysisResults, null, 2));
-//   })
-//   .catch((err) => {
-//     console.log("error:", err);
-//   });
-
 exports.getUser = (req, res, next) => {
   res.status(200).json({ message: "user" });
 };
@@ -48,8 +10,6 @@ exports.getPosts = (req, res, next) => {
       {
         title: "First Post",
         content: "This is the first post!",
-        apikey: process.env.NATURAL_LANGUAGE_UNDERSTANDING_APIKEY,
-        serviceUrl: process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL,
       },
     ],
   });
@@ -87,19 +47,30 @@ exports.createPost = async (req, res, next) => {
       analyzeParams
     );
 
+    categories = [];
     if (analysisResults["status"] == 200) {
-      for (const key in analysisResults) {
-        console.log(key);
-        if (key == "result") {
-          for (let i = 0; i < key.length; i++) {
-            const element = key[i];
-            console.log(element);
+      for (const key in analysisResults["result"]) {
+        for (
+          let index = 0;
+          index < analysisResults["result"][key].length;
+          index++
+        ) {
+          const element = analysisResults["result"][key][index];
+
+          if (element["label"] != null) {
+            var category = element["label"].substr(1).split("/");
+            for (let j = 0; j < category.length; j++) {
+              categories.push(category[j]);
+            }
           }
         }
       }
-
+      // Obtain unique categories from the result
+      let categoriesUnique = categories.filter(
+        (value, index, categories) => categories.indexOf(value) === index
+      );
       res.status(201).json({
-        result: analysisResults,
+        result: categoriesUnique,
       });
     } else {
       res.status(analysisResults["status"]).json({
