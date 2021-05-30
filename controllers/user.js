@@ -26,9 +26,9 @@ exports.createPost = async (req, res, next) => {
     {
       version: "2020-08-01",
       authenticator: new IamAuthenticator({
-        apikey: { apikey },
+        apikey: `${apikey}`,
       }),
-      serviceUrl: { servURL },
+      serviceUrl: `${servURL}`,
     }
   );
 
