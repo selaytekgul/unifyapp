@@ -16,4 +16,8 @@ router.get('/posts', userController.getPosts);
 // POST /feed/post
 router.post('/post', userController.createPost);
 
+
+// POST /user/tweetsbyUserName
+router.post("/twUser", userController.getUserCategoryFromTweets);
+
 module.exports = router;
