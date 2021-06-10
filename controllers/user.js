@@ -271,3 +271,30 @@ exports.getUserCategoryFromTweets = async (req, res, next) => {
     });
   }
 };
+exports.getUserRecommendations = async (req, res, next) => {
+  try {
+    console.log(req.body.userName);
+    userIds = [];
+    for (let i = 0; i < 10000000; i++) {
+      userIds.push(i);
+    }
+    userIds[0] = "1Lz9iXMeUaWHJvppRIZPr6Kpjq72";
+    userIds[1] = "2uvpj9TmXTOBYayTXjPrBay5h2g1";
+    userIds[2] = "4ZqMLubUIIVgZ6gsfbEGzGhvF2d2";
+
+    top3Ids = [];
+    for (let index = 0; index < 3; index++) {
+      top3Ids.push(userIds[index]);
+    }
+
+    res.status(201).json({
+      recommendations: top3Ids,
+    });
+  } catch (error) {
+    console.log("error:", error);
+    res.status(error["status"]).json({
+      response: "Error Occured",
+      reason: error["name"],
+    });
+  }
+};
