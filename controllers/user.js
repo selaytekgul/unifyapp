@@ -275,7 +275,7 @@ exports.getUserRecommendations = async (req, res, next) => {
   try {
     console.log(req.body.userName);
     userIds = [];
-    for (let i = 0; i < 10000000; i++) {
+    for (let i = 0; i < 10000; i++) {
       userIds.push(i);
     }
     userIds[0] = "1Lz9iXMeUaWHJvppRIZPr6Kpjq72";
