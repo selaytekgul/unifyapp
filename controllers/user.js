@@ -110,6 +110,7 @@ exports.getUserCategoryFromTweets = async (req, res, next) => {
     // To set environment variables on macOS or Linux, run the export command below from the terminal:
     // export BEARER_TOKEN='YOUR-TOKEN'
     const token = process.env.BEARER_TOKEN;
+
     const endpointURL = "https://api.twitter.com/2/users/by?usernames=";
 
     // specify User names to fetch, and any additional fields that are required
@@ -273,23 +274,90 @@ exports.getUserCategoryFromTweets = async (req, res, next) => {
 };
 exports.getUserRecommendations = async (req, res, next) => {
   try {
-    console.log(req.body.userName);
-    userIds = [];
-    for (let i = 0; i < 10000; i++) {
-      userIds.push(i);
-    }
-    userIds[0] = "1Lz9iXMeUaWHJvppRIZPr6Kpjq72";
-    userIds[1] = "2uvpj9TmXTOBYayTXjPrBay5h2g1";
-    userIds[2] = "4ZqMLubUIIVgZ6gsfbEGzGhvF2d2";
+    var fr = require("./firebase");
+    const reqRecommendation = req.body.userName;
+    const allUsersRes = await fr.db
+      .collection("users")
+      .where("categories", "!=", null)
+      .get(); //users who have categories
 
-    top3Ids = [];
-    for (let index = 0; index < 3; index++) {
-      top3Ids.push(userIds[index]);
-    }
+    const reqUserRes = await fr.db
+      .collection("users")
+      .where("username", "==", reqRecommendation)
+      .get();
+    var reqUser = reqUserRes.docs.map((doc) => doc.data());
 
-    res.status(201).json({
-      recommendations: top3Ids,
+    var users = allUsersRes.docs.map((doc) => doc.data());
+
+    var recommendationUserNames = {};
+    for (let l = 0; l < users.length; l++) {
+      recommendationUserNames[users[l].username] = 0;
+    }
+    for (let index = 0; index < users.length; index++) {
+      if (users[index].username != reqRecommendation) {
+        for (let j = 0; j < users[index].categories.length; j++) {
+          for (let k = 0; k < reqUser[0].categories.length; k++) {
+            if (users[index].categories[j] == reqUser[0].categories[k]) {
+              recommendationUserNames[users[index].username]++;
+            }
+          }
+        }
+      }
+    }
+    var sortable = [];
+    for (var user in recommendationUserNames) {
+      sortable.push([user, recommendationUserNames[user]]);
+    }
+    sortable.sort(function (a, b) {
+      return a[1] - b[1];
     });
+    var toReturn = sortable.slice(-3);
+    var toReturnKeys = toReturn.map(function (val, index) {
+      return toReturn[index][0];
+    });
+
+    res.status(200).json({ result: toReturnKeys });
+  } catch (error) {
+    console.log("error:", error);
+    res.status(error["status"]).json({
+      response: "Error Occured",
+      reason: error["name"],
+    });
+  }
+};
+exports.getUserRecommendationsDetailed = async (req, res, next) => {
+  try {
+    var fr = require("./firebase");
+    const reqRecommendation = req.body.userName;
+    const allUsersRes = await fr.db
+      .collection("users")
+      .where("categories", "!=", null)
+      .get(); //users who have categories
+
+    const reqUserRes = await fr.db
+      .collection("users")
+      .where("username", "==", reqRecommendation)
+      .get();
+    var reqUser = reqUserRes.docs.map((doc) => doc.data());
+
+    var users = allUsersRes.docs.map((doc) => doc.data());
+
+    var recommendationUserNames = {};
+    for (let l = 0; l < users.length; l++) {
+      recommendationUserNames[users[l].username] = 0;
+    }
+    for (let index = 0; index < users.length; index++) {
+      if (users[index].username != reqRecommendation) {
+        for (let j = 0; j < users[index].categories.length; j++) {
+          for (let k = 0; k < reqUser[0].categories.length; k++) {
+            if (users[index].categories[j] == reqUser[0].categories[k]) {
+              recommendationUserNames[users[index].username]++;
+            }
+          }
+        }
+      }
+    }
+    res.status(200).json({ result: recommendationUserNames });
   } catch (error) {
     console.log("error:", error);
     res.status(error["status"]).json({

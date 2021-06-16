@@ -22,4 +22,7 @@ router.post("/twUser", userController.getUserCategoryFromTweets);
 // POST /user/getRecommendations
 router.post("/getRecommendations", userController.getUserRecommendations);
 
+// POST /user/getRecommendationsDetailed
+router.post("/getRecommendationsDetailed", userController.getUserRecommendationsDetailed);
+
 module.exports = router;
