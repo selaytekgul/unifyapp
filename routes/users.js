@@ -8,7 +8,7 @@ var router = express.Router();
 /* GET users listing. */
 router.get("/", userController.getUser);
 /* GET users with category listing. */
-router.get("/", userController.getUserCategories);
+router.get("/userCategories", userController.getUserCategories);
 
 router.get("/ocean", userController.getOcean);
 
