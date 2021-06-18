@@ -7,6 +7,8 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get("/", userController.getUser);
+/* GET users with category listing. */
+router.get("/", userController.getUserCategories);
 
 router.get("/ocean", userController.getOcean);
 
@@ -23,6 +25,9 @@ router.post("/twUser", userController.getUserCategoryFromTweets);
 router.post("/getRecommendations", userController.getUserRecommendations);
 
 // POST /user/getRecommendationsDetailed
-router.post("/getRecommendationsDetailed", userController.getUserRecommendationsDetailed);
+router.post(
+  "/getRecommendationsDetailed",
+  userController.getUserRecommendationsDetailed
+);
 
 module.exports = router;

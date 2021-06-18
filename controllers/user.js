@@ -1,4 +1,22 @@
-exports.getUser = (req, res, next) => {
+exports.getUser = async (req, res, next) => {
+  try {
+    var fr = require("./firebase");
+    const allUsersRes = await fr.db.collection("users").get(); //users who have categories
+
+    var users = allUsersRes.docs.map((doc) => doc.data());
+
+    res.status(200).json({ result: users });
+  } catch (error) {
+    console.log("error:", error);
+    res.status(error["status"]).json({
+      response: "Error Occured",
+      reason: error["name"],
+    });
+  }
+
+  res.status(200).json({ message: "user" });
+};
+exports.getUserCategories = async (req, res, next) => {
   try {
     var fr = require("./firebase");
     const allUsersRes = await fr.db
